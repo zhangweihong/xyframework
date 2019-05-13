@@ -361,7 +361,7 @@ public class ResourcesManager : SingletonMono<ResourcesManager>
     private void AsyncResourcesLoadAsset(string assetPath, Action<object> callBack)
     {
         object obj = null;
-        if (CheckLoaclAssetInDic(assetPath, ref obj))
+        if (CheckLocalAssetInDic(assetPath, ref obj))
         {
             if (callBack == null)
             {
@@ -407,7 +407,7 @@ public class ResourcesManager : SingletonMono<ResourcesManager>
     /// </summary>
     /// <param name="assetPath"></param>
     /// <returns></returns>
-    private bool CheckLoaclAssetInDic(string assetPath, ref object obj)
+    private bool CheckLocalAssetInDic(string assetPath, ref object obj)
     {
         if (curLoaclAssetDic.TryGetValue(assetPath, out obj))
         {
@@ -433,7 +433,7 @@ public class ResourcesManager : SingletonMono<ResourcesManager>
     private void SyncResourcesLoadAsset(string assetPath, Action<object> callBack)
     {
         object obj = null;
-        if (CheckLoaclAssetInDic(assetPath, ref obj))
+        if (CheckLocalAssetInDic(assetPath, ref obj))
         {
             if (callBack == null)
             {
