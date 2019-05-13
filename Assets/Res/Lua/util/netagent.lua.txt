@@ -1,0 +1,141 @@
+--弱网络 脚本交互
+local netagent = {}
+netagent.host = "https://127.0.0.1/app/"
+netagent.token = ""
+function netagent.send(url, field, callback, binaryfield, errorcallback)
+    local function _callback(js)
+        if js == nil or string.len(js) < 1 then
+            tipscontroller.showtoasttips(Lang("网络错误"))
+            if errorcallback ~= nil then
+                errorcallback()
+            end
+        else
+            if callback ~= nil then
+                callback(js)
+            end
+        end
+    end
+    DownLoadManager:SendNetRequstBackJson_Lua(netagent.host, url, field, _callback, binaryfield)
+end
+
+--获取验证码
+function netagent.getcheckcode(userphone, callback, errorcallback)
+    local url = "login/code"
+    local field = {}
+    field["userphone"] = userphone
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--登录并注册
+function netagent.loginandregister(userphone, checkcode, callback, errorcallback)
+    local url = "login"
+    local field = {}
+    field["userphone"] = userphone
+    field["checkcode"] = checkcode
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--自动登录
+function netagent.autologin(callback, errorcallback)
+    local url = "login/checkToken"
+    local field = {}
+    field["token"] = netagent.token
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--获取用户信息
+function netagent.getusermsg(userphone, callback, errorcallback)
+    local url = "user"
+    local field = {}
+    field["token"] = netagent.token
+    field["userphone"] = userphone
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--同步个人信息
+function netagent.syncusermsg(name, sex, age, address, gps, extra, callback, errorcallback)
+    local url = "user/editInfo"
+    local field = {}
+    field["token"] = netagent.token
+    field["name"] = name
+    field["sex"] = sex
+    field["age"] = age
+    field["address"] = address
+    field["gps"] = gps
+    field["extra"] = extra
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--编辑个人信息
+function netagent.editusermsg(name, sex, age, address, gps, extra, callback, errorcallback)
+    local url = "user/edit"
+    local field = {}
+    field["token"] = netagent.token
+    field["name"] = name
+    field["sex"] = sex
+    field["age"] = age
+    field["address"] = address
+    field["gps"] = gps
+    field["extra"] = extra
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--app更新检测
+function netagent.appcheckversion(appid, callback, errorcallback)
+    local url = "version"
+    local field = {}
+    field["appid"] = appid
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--app资源更新
+function netagent.appresmsg(appid, callback, errorcallback)
+    local url = "resources"
+    local field = {}
+    field["token"] = netagent.token
+    field["appid"] = appid
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--app 项目 编辑和添加
+function netagent.getappproeditandadd(appid, codename, filepath, filemsg, callback, errorcallback)
+    local url = "project/upload"
+    local field = {}
+    field["token"] = netagent.token
+    field["appid"] = appid
+    field["codename"] = codename
+    local binaryfield = {}
+    binaryfield["file"] = filemsg
+    netagent.send(url, field, callback, binaryfield, errorcallback)
+end
+
+--app获取项目列表
+function netagent.getappprolist(appid, callback, errorcallback)
+    local url = "project"
+    local field = {}
+    field["token"] = netagent.token
+    field["appid"] = appid
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--获取单个项目信息
+function netagent.getappsingelpromsg(appid, codename, callback, errorcallback)
+    local url = "project/data"
+    local field = {}
+    field["token"] = netagent.token
+    field["appid"] = appid
+    field["codename"] = codename
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+--删除单个项目
+function netagent.delappsingelprodel(appid, codename, callback, errorcallback)
+    local url = "project/del"
+    local field = {}
+    field["token"] = netagent.token
+    field["appid"] = appid
+    field["codename"] = codename
+    netagent.send(url, field, callback, nil, errorcallback)
+end
+
+return netagent

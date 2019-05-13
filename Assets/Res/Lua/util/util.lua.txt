@@ -1,0 +1,214 @@
+--工具集
+local util = {}
+function util.contains(value, tab)
+    local index = 0
+    for k, v in ipairs(tab) do
+        index = index + 1
+        if v == value then
+            return true, index
+        end
+    end
+    return false, index
+end
+function util.containskey(key, tab)
+    local index = 0
+    for k, v in ipairs(tab) do
+        index = index + 1
+        if key == k then
+            return true, index
+        end
+    end
+    return false, index
+end
+
+function util.removeitem(value, tab)
+    local isexist, index = util.contains(value, tab)
+    if isexist then
+        table.remove(tab, index)
+    end
+end
+
+function util.removeitemwithkey(key, tab)
+    local isexist, index = util.containskey(key, tab)
+    if isexist then
+        table.remove(tab, index)
+    else
+        tab[key] = nil
+    end
+end
+
+function util.checkcountisnull(table)
+    local index = 0
+    for k, v in pairs(table) do
+        index = index + 1
+        return false
+    end
+    if index > 0 then
+        return true
+    end
+end
+
+function util.refreshLang(serializelang) --刷新语言环境
+    if serializelang ~= nil then
+        if serializelang.LastLangSetting == LangSetting then
+            return
+        end
+        local length = serializelang.Langls.Count
+        for i = 1, length do
+            local lang = serializelang.Langls[i - 1]
+            local nowtext = Lang(lang.Key)
+            lang.Text.text = nowtext
+        end
+        serializelang.LastLangSetting = LangSetting
+    end
+end
+
+util.lasttime = 0
+function util.sendcmdtobluet(cmd, finishfun, errorfun, isstopcmd)
+    if not isstopcmd then --避免 stop 一直递归循环发送
+        if tipscontroller.bluetconnected == false then
+            tipscontroller.showblueselecttips()
+            commandcontroller.stoprunfun(true, true)
+            return
+        end
+    end
+    local cachetime = Time.time - util.lasttime
+    util.lasttime = Time.time
+    Debug.Log(
+        cmd ..
+            "  time:" ..
+                cachetime ..
+                    " " ..
+                        tipscontroller.curbluetaddress ..
+                            " " .. tipscontroller.curbluetserviceid .. " " .. tipscontroller.curbluetcharacteristicid
+    )
+    CSUtil.WriteCmdToBluet(
+        tipscontroller.curbluetaddress,
+        tipscontroller.curbluetserviceid,
+        tipscontroller.curbluetcharacteristicid,
+        cmd,
+        function(cid, ints, flag)
+            if finishfun ~= nil then
+                finishfun()
+            end
+        end
+    )
+    -- local datas = CSUtil.StrConvertBytes(cmd)
+    -- BluetoothLEHardwareInterface.WriteCharacteristic(
+    --     tipscontroller.curbluetaddress,
+    --     tipscontroller.curbluetserviceid,
+    --     tipscontroller.curbluetcharacteristicid,
+    --     datas,
+    --     datas.Length,
+    --     true,
+    --     function(str,ints)
+    --         if finishfun ~= nil then
+    --             finishfun()
+    --         end
+    --     end
+    -- )
+end
+
+function util.connectbluet(address, serviceid, characteristicid, cmd, cb)
+    -- local datas = CSUtil.StrConvertBytes(cmd)
+    -- BluetoothLEHardwareInterface.WriteCharacteristic(
+    --     address,
+    --     serviceid,
+    --     characteristicid,
+    --     datas,
+    --     datas.Length,
+    --     true,
+    --     function(str,ints)
+    --         if cb ~= nil then
+    --             cb(str)
+    --             print("connectbluet ")
+    --         end
+    --     end
+    -- )
+
+    CSUtil.WriteCmdToBluet(
+        tipscontroller.curbluetaddress,
+        tipscontroller.curbluetserviceid,
+        tipscontroller.curbluetcharacteristicid,
+        cmd,
+        function(cid, ints, flag)
+            if cb ~= nil then
+                cb(cid)
+            end
+        end
+    )
+end
+
+function util.writetobluetfile(cmd)
+    CSUtil.WriteCmdToBluet(
+        tipscontroller.curbluetaddress,
+        tipscontroller.curbluetserviceid,
+        tipscontroller.curbluetcharacteristicid,
+        cmd,
+        function(cid, ints, flag)
+            if flag == "1" then --成功为1
+                commandcontroller.sendindex = commandcontroller.sendindex + 1
+                commandcontroller.startsendingupdatedata_fun()
+            elseif flag == "0" then --失败为0
+                commandcontroller.startsendingupdatedata_fun()
+            end
+        end
+    )
+end
+
+function util.getuniquekey(key)
+    return key .. logincontroller.curmodelindex .. logincontroller.curphone
+end
+
+function util.getbottbkey()
+    local bottablekey = "botmini"
+    if logincontroller.curmodelindex == 1 then --根据产品类型选择表
+        bottablekey = "botmini"
+    elseif logincontroller.curmodelindex == 2 or logincontroller.curmodelindex == 3 then
+        bottablekey = "bot1"
+    end
+    return bottablekey
+end
+
+function util.splitstr(str, split_char)
+    local sub_str_tab = {}
+    while (true) do
+        local pos = string.find(str, split_char)
+        if (not pos) then
+            sub_str_tab[#sub_str_tab + 1] = str
+            break
+        end
+        local sub_str = string.sub(str, 1, pos - 1)
+        sub_str_tab[#sub_str_tab + 1] = sub_str
+        str = string.sub(str, pos + 1, #str)
+    end
+
+    return sub_str_tab
+end
+
+function util.split(szFullString, szSeparator)
+    local nFindStartIndex = 1
+    local nSplitIndex = 1
+    local nSplitArray = {}
+    while true do
+        local nFindLastIndex = string.find(szFullString, szSeparator, nFindStartIndex)
+        if not nFindLastIndex then
+            nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, string.len(szFullString))
+            break
+        end
+        nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, nFindLastIndex - 1)
+        nFindStartIndex = nFindLastIndex + string.len(szSeparator)
+        nSplitIndex = nSplitIndex + 1
+    end
+    return nSplitArray
+end
+
+function util.exitapp()
+    if Platform == "Android" then
+        Application.Quit()
+    elseif Platform == "IOS" then
+        SDKManager:ExitApp()
+    end
+end
+
+return util

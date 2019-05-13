@@ -1,0 +1,77 @@
+--在外面写变量的时候要注意下不要和元表里面的默认属性冲突
+--不然元表的属性可能就会被覆盖
+--自己需要什么方法自行在进行添加，！！！不要和元表重叠就好
+local tempview = BaseView.new()
+tempview.openviewfun = nil
+tempview.closeviewfun = nil
+tempview.destroyfun = nil
+--对应C# 层的awake
+function tempview.awake()
+    tempview.injectobject()
+end
+
+--injectobject 函数不要手动填写代码 在注入的时候会有新的代码自动添加进来
+function tempview.injectobject()
+    --s
+    --e
+end
+
+--对应C# 层的start
+function tempview.start()
+end
+
+function tempview.enable()
+end
+
+function tempview.disable()
+end
+
+function tempview.clickfun(go)
+end
+
+--帧率函数 如果不用 尽量不要 打开 一般 不要在 update 里面调用东西 回来会写一个统一刷新的地方 被摧毁时候会调用一次
+-- function tempview.update()
+-- end
+
+--gameobject被摧毁时候会调用一次
+function tempview.ondestroy()
+    if tempview.destroyfun ~= nil then
+        tempview.destroyfun()
+    end
+end
+
+function tempview.init(gameobject)
+    tempview.super.init(tempview, gameobject)
+end
+
+--打开窗口
+function tempview.openview()
+    tempview.super.openview(tempview)
+    --强制执行一次父类函数
+    if tempview.openviewfun ~= nil then
+        tempview.openviewfun()
+    end
+end
+
+--关闭view 仅且是关闭不会释放
+function tempview.closeview(isFalseActive, isShowCloseAni)
+    tempview.super.closeview(tempview, isFalseActive, isShowCloseAni)
+    if tempview.closeviewfun ~= nil then
+        tempview.closeviewfun()
+    end
+end
+
+--清除的数据或者一些引用 使ui还原为初始加载的情况 但是 资源不会被释放
+function tempview.clear()
+    tempview.super.clear(tempview)
+    --强制执行一次父类函数
+end
+
+--关闭摧毁并卸载掉资源
+function tempview.unload()
+    tempview.clear()
+    tempview.super.unload(tempview)
+    --强制执行一次父类函数
+end
+
+return tempview

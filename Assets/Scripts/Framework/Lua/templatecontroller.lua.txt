@@ -1,0 +1,77 @@
+tempcontroller = BaseController.new()
+--当前的数据模型 禁止直接外部调用 想要里面的数据 写调用方法
+tempcontroller._m = nil
+--当前的view 禁止外部直接调用 想要里面的东西 自己方法
+tempcontroller._v = nil
+--属于当前view的子view等
+tempcontroller.otherviews = nil
+
+--初始化使用
+function tempcontroller.init()
+    tempcontroller.super.init()
+end
+
+--注册数据模型
+function tempcontroller.registermodel(model)
+    tempcontroller.super.registermodel(model)
+    tempcontroller._m = model
+end
+
+--刷新模型
+function tempcontroller.refreshmodel(model)
+    tempcontroller.super.refreshmodel(model)
+    tempcontroller._m = model
+end
+
+--注册view
+function tempcontroller.registerview(view)
+    tempcontroller.super.registerview(view)
+    tempcontroller._v = view
+    tempcontroller._v.openviewfun = tempcontroller.openviewfun
+    tempcontroller._v.closeviewfun = tempcontroller.closeviewfun
+    tempcontroller._v.destroyfun = tempcontroller.destroyfun
+end
+
+--注册其他子view
+function tempcontroller.registerotherview(key, view)
+    if tempcontroller.otherviews == nil then
+        tempcontroller.otherviews = {}
+    end
+    tempcontroller.otherviews[key] = view
+end
+
+function tempcontroller.openviewfun()
+end
+
+function tempcontroller.closeviewfun()
+end
+
+function tempcontroller.destroyfun()
+    if tempcontroller.unload ~= nil then
+        tempcontroller.unload()
+    end
+end
+
+--清除(如 数据，view的一些基本设置)
+function tempcontroller.clear()
+    tempcontroller.super.clear()
+end
+
+--真实卸载
+function tempcontroller.unload()
+    tempcontroller.super.unload()
+    tempcontroller.clear()
+    tempcontroller._m.clear()
+    tempcontroller._v.unload()
+    if tempcontroller.otherviews ~= nil then
+        for k, v in pairs(tempcontroller.otherviews) do
+            v.unload()
+        end
+    end
+    tempcontroller.otherviews = nil
+    tempcontroller._v = nil
+    tempcontroller._m = nil
+    ResourcesManager.I:UnLoadAssetBundleAsset(tempcontroller.abname, tempcontroller.assetname)
+end
+
+return tempcontroller

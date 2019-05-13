@@ -1,0 +1,152 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using System;
+
+/// <summary>
+/// xlua 注册管理脚本
+/// </summary>
+public static class XLuaRegisterEditor
+{
+    [XLua.LuaCallCSharp]
+    public static List<Type> module_lua_call_cs_list = new List<Type>()
+    {
+        typeof(App),
+        typeof(DownLoadManager),
+        typeof(VersionManager),
+        typeof(MediaPlayerManager),
+        typeof(SerilizeInfo),
+        typeof(XLuaManager),
+        typeof(Debug),
+        typeof(ResourcesManager),
+        typeof(SDKManager),
+        typeof(GameSettingUtil),
+        typeof(Util),
+        typeof(PathUtil),
+        typeof(StringUtil),
+        typeof(GamePlayerPrefs),
+        typeof(TimeUtil),
+        typeof(Image),
+        typeof(RawImage),
+        typeof(Sprite),
+        typeof(Quaternion),
+        typeof(Animation),
+        typeof(AnimationClip),
+        typeof(MessageCenter),
+        typeof(MessegerID),
+        typeof(UIID),
+        typeof(UIAnimationState),
+        typeof(AssetType),
+        typeof(AnimationUtil),
+        typeof(XLuaMonoBehaviour),
+        typeof(CanvasGroup),
+        typeof(ScrollRect),
+        typeof(GridLayoutGroup),
+        typeof(Slider),
+        typeof(UGUISlider),
+        typeof(SimpleJoysticks),
+        typeof(SystemInfo),
+        typeof(CameraOrRootSizeScale),
+        typeof(CameraWaterWaveEffect),
+        typeof(SoundManager),
+        typeof(InputField),
+        typeof(SimplePoolManager),
+        typeof(Color),
+        typeof(Dropdown),
+        typeof(DelayTimeexeManager),
+        typeof(DelayFunStruct),
+        typeof(UGUIScrollRect),
+        typeof(UGUIDropdown),
+        typeof(EventTriggerDragListener),
+        typeof(EventTriggerListener),
+        typeof(SerializeLangScript),
+        typeof(DateTime),
+    };
+
+    [XLua.CSharpCallLua]
+    public static List<Type> module_cs_call_lua_list = new List<Type>()
+    {
+
+        typeof(Action),
+        typeof(Action<float>),
+        typeof(Action<int>),
+        typeof(Action<long>),
+        typeof(Action<string>),
+        typeof(Action<object>),
+        typeof(Action<GameObject>),
+        typeof(Action<GameObject,GameObject,GameObject>),
+        typeof(Action<Vector2>),
+        typeof(Action<Vector2,float>),
+        typeof(Action<string, string>),
+        typeof(Action<string, string, string>),
+        typeof(Action<string, byte[]>),
+        typeof(Action<string, int[]>),
+        typeof(Action<string, int[], string>),
+        typeof(Action<int,int[]>),
+        typeof(Action<int,List<int[]>>),
+        typeof(Action<int,List<int[]>,int>),
+        typeof(Action<int,byte[]>),
+        typeof(Action<List<Vector3>>),
+        typeof(Action<List<string>>),
+        typeof(Action<long, List<string>>),
+        typeof(Action<long, List<string>,string>),
+        typeof(Action<string, string, int, byte[]>),
+        typeof(Action<string, string, byte[]>),
+        typeof(Action<float, string, byte[]>),
+        typeof(EventTriggerListener.VoidDelegate),
+        typeof(EventTriggerListener.BoolDelegate),
+        typeof(EventTriggerListener.FloatDelegate),
+        typeof(EventTriggerListener.KeyCodeDelegate),
+        typeof(EventTriggerListener.VectorDelegate),
+        typeof(EventTriggerListener.ObjectDelegate),
+        typeof(UnityEvent<float>),
+        typeof(UnityEvent<int>),
+        typeof(UnityAction<int>),
+        typeof(UnityAction<float>),
+        typeof(SimplePoolManager),
+    };
+
+
+    [XLua.Hotfix]
+    public static List<Type> module_hotfix = new List<Type>()
+    {
+        typeof(App),
+        typeof(DownLoadManager),
+        typeof(VersionManager),
+        typeof(MediaPlayerManager),
+        typeof(SerilizeInfo),
+        typeof(XLuaManager),
+        typeof(Debug),
+        typeof(ResourcesManager),
+        typeof(SDKManager),
+        typeof(GameSettingUtil),
+        typeof(Util),
+        typeof(PathUtil),
+        typeof(StringUtil),
+        typeof(GamePlayerPrefs),
+        typeof(TimeUtil),
+        typeof(MessageCenter),
+        typeof(MessegerID),
+        typeof(UIID),
+        typeof(UIAnimationState),
+        typeof(AssetType),
+        typeof(AnimationUtil),
+        typeof(XLuaMonoBehaviour),
+        typeof(Slider),
+        typeof(UGUISlider),
+        typeof(SimpleJoysticks),
+        typeof(CameraOrRootSizeScale),
+        typeof(CameraWaterWaveEffect),
+        typeof(SoundManager),
+        typeof(SimplePoolManager),
+        typeof(DelayTimeexeManager),
+        typeof(DelayFunStruct),
+        typeof(UGUIScrollRect),
+        typeof(UGUIDropdown),
+        typeof(EventTriggerDragListener),
+        typeof(EventTriggerListener),
+        typeof(SerializeLangScript),
+    };
+}

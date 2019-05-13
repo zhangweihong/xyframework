@@ -1,0 +1,19 @@
+--对应的ui id
+UIID = {}
+UIID.None = -1
+UIID.Login = 0
+UIID.Game = 1
+UIID.User = 2
+UIID.Command = 3
+UIID.Story = 4
+UIID.Lab = 5
+UIID.Compose = 6
+UIID.Bot = 7
+UIID.RemoteCtr = 8
+UIID.Joy = 9
+UIID.Speech = 10
+UIID.Gyroscope = 11
+UIID.Draw = 12
+UIID.Joy2 = 13
+UIID.NewUser = 14
+UIID.Scene = 15

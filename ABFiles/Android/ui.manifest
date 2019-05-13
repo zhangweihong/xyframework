@@ -1,0 +1,11 @@
+ManifestFileVersion: 0
+CRC: 3218493511
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: share/font.assetbundle
+      Dependencies: {}
+    Info_1:
+      Name: prefab/ui/login.assetbundle
+      Dependencies:
+        Dependency_0: share/font.assetbundle

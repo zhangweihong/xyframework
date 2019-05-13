@@ -1,0 +1,14 @@
+---承载数据模型
+local Loginmodel = BaseModel.new()
+
+--初始化数据
+function Loginmodel.init()
+    Loginmodel.super.init()
+end
+
+--清理数据
+function Loginmodel.clear()
+    Loginmodel.super.clear()
+end
+
+return Loginmodel

@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 3205158073
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 4487263370f0fab87335eec1a66e93e6
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 534142af7cd403e040139f1c1cc2c690
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+Assets:
+- Assets/Res/Font/GameFont.ttf
+Dependencies: []

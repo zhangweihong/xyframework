@@ -1,0 +1,21 @@
+ManifestFileVersion: 0
+CRC: 980033775
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: eded5c248d6bb3fd3337b6b9273c82c7
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Res/Sound/Sound/buttonclick.mp3
+- Assets/Res/Sound/Sound/split.mp3
+- Assets/Res/Sound/Sound/connect.mp3
+- Assets/Res/Sound/Sound/del.mp3
+- Assets/Res/Sound/Sound/beep.ogg
+- Assets/Res/Sound/Sound/win.mp3
+Dependencies: []

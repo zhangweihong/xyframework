@@ -1,0 +1,42 @@
+local app = {}
+app.context = require("Lua/app/context")
+--主要是一些全局会用到的变量
+Loading:ShowLoading(true, 0)
+--游戏lua初始化入口
+function app.init()
+    Config.loaddata()
+    UIManager.init()
+end
+--初始化
+app.init()
+--开始ui加载
+Loading:ShowLoading()
+UIManager.startloadgame(
+    function()
+        UIManager.checkappversion(
+            function()
+                UIManager.loadgame()
+            end
+        )
+    end
+)
+
+--app home键进入后台
+function app.pause()
+    DelayTimeexeManager:Add(
+        DelayFunStruct(
+            3,
+            function()
+                if tipscontroller ~= nil and tipscontroller.bluetconnected then --是否已经链接
+                    tipscontroller.showblueselecttips()
+                end
+            end
+        )
+    )
+end
+--app home键恢复
+function app.resume() --再次被唤起
+    DelayTimeexeManager:Clear()
+end
+
+return app

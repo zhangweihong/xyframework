@@ -1,0 +1,584 @@
+local uimanager = {}
+
+uimanager.viewdic = {}
+uimanager.controllerdic = {}
+uimanager.modeldic = {}
+uimanager.curopenuiid = UIID.None
+uimanager.uiCloseStack = {}
+uimanager.isloading = false --是否正在加载中
+
+function uimanager.init()
+    uimanager.registercontroller()
+    uimanager.registermodel()
+    uimanager.initmvc()
+    DelayTimeexeManager:SetBackKeyAction(uimanager.backkeyfun)
+end
+
+function uimanager.loadcommonuiasync(path, assetname, callback)
+    ResourcesManager:Load(
+        path,
+        assetname,
+        function(obj)
+            if callback ~= nil then
+                local serilizeloadfinish = function()
+                    callback(obj)
+                end
+
+                local serilizeInfo = obj:GetComponent(typeof(SerilizeInfo))
+                if serilizeInfo ~= nil then
+                    serilizeInfo:LoadSerizeInfoAsset(serilizeloadfinish)
+                else
+                    serilizeloadfinish()
+                end
+            else
+                Debug.LogError("loadcommonuiasync callback is nil " .. assetname)
+            end
+        end,
+        AssetType.GameObjct,
+        true,
+        false
+    )
+end
+
+function uimanager.unloadcommonui(obj, path, assetname)
+    if obj == nil then
+        return
+    end
+    local serilizeInfo = obj:GetComponent(typeof(SerilizeInfo))
+    serilizeInfo:UnLoadSerizeInfoAsset()
+    ResourcesManager:UnLoadAssetBundleAsset(path, assetname)
+end
+
+function uimanager.loadandsettexture_forRawImage(path, assetname, rawimge, callback)
+    ResourcesManager:Load(
+        path,
+        assetname,
+        function(obj)
+            rawimge.texture = obj
+            if callback ~= nil then
+                callback(obj)
+            end
+        end,
+        AssetType.Texture,
+        true,
+        false
+    )
+end
+
+function uimanager.unloadtexture_forRawImage(path, assetname, rawimge)
+    rawimge.texture = nil
+    ResourcesManager:UnLoadAssetBundleAsset(path, assetname)
+end
+
+function uimanager.openviewasync(uiid, path, viewname, callback, isclosecurview, unuseloading)
+    uimanager.isloading = true
+    if not unuseloading then
+        Loading:ShowLoading()
+    end
+
+    if isclosecurview and uiid ~= uimanager.curopenuiid then
+        uimanager.closeview(uimanager.curopenuiid, true, true)
+    end
+    local controller = nil
+    local model = nil
+    local view = nil
+
+    controller = uimanager.controllerdic[uiid]
+    model = uimanager.modeldic[uiid]
+    view = uimanager.viewdic[uiid]
+    if controller == nil then
+        Debug.LogError(id.ToString() + "Controller 出错了，没有被找到，请确定是否被注册过")
+        return
+    end
+    if model == nil then
+        Debug.LogError(id.ToString() + "Model 出错了，没有被找到，请确定是否被注册过")
+        return
+    end
+
+    if view ~= nil and view.isvaild(view) then
+        view.obj:SetActive(true)
+        if callback ~= nil then
+            if not unuseloading then
+                Loading:HideLoading()
+            end
+            callback(controller)
+        end
+        if isclosecurview then
+            uimanager.curopenuiid = uiid
+        end
+        view.openview()
+        uimanager.delayreenablebackkeyfun()
+    else
+        ResourcesManager:Load(
+            path,
+            viewname,
+            function(obj)
+                local viewGo = GameObject.Instantiate(obj, uimanager.canvas.transform)
+                local xluamono = viewGo:GetComponent(typeof(XLuaMonoBehaviour))
+                view = xluamono:GetLuaObj()
+                controller.registermodel(model)
+                controller.registerview(view)
+                controller.abname = path
+                controller.assetname = path
+                view.init(viewGo)
+                if view.serilizeInfo ~= nil then
+                    view.serilizeInfo:LoadSerizeInfoAsset(
+                        function()
+                            if callback ~= nil then
+                                uimanager.delayreenablebackkeyfun()
+                                if not unuseloading then
+                                    Loading:HideLoading()
+                                end
+                                callback(controller)
+                            end
+                        end
+                    )
+                else
+                    if callback ~= nil then
+                        uimanager.delayreenablebackkeyfun()
+                        if not unuseloading then
+                            Loading:HideLoading()
+                        end
+                        callback(controller)
+                    end
+                end
+                view.openview()
+                uimanager.viewdic[uiid] = view
+                if isclosecurview then
+                    uimanager.curopenuiid = uiid
+                end
+                viewGo:SetActive(true)
+            end,
+            AssetType.GameObjct,
+            true,
+            false
+        )
+    end
+end
+
+--后台预加载view 主要为了避免一些view上的承载的资源较多导致第一次加载的时候时间略长  -- 慎用 不符合正常逻辑
+function uimanager.prebackloadview(uiid, path, viewname, callback)
+    local controller = nil
+    local model = nil
+    local view = nil
+
+    controller = uimanager.controllerdic[uiid]
+    model = uimanager.modeldic[uiid]
+    view = uimanager.viewdic[uiid]
+    if controller == nil then
+        Debug.LogError(id.ToString() + "Controller 出错了，没有被找到，请确定是否被注册过")
+        return
+    end
+    if model == nil then
+        Debug.LogError(id.ToString() + "Model 出错了，没有被找到，请确定是否被注册过")
+        return
+    end
+    ResourcesManager:Load(
+        path,
+        viewname,
+        function(obj)
+            local viewGo = GameObject.Instantiate(obj, uimanager.canvas.transform)
+            local xluamono = viewGo:GetComponent(typeof(XLuaMonoBehaviour))
+            view = xluamono:GetLuaObj()
+            controller.registermodel(model)
+            controller.registerview(view)
+            controller.abname = path
+            controller.assetname = path
+            view.init(viewGo)
+            if view.serilizeInfo ~= nil then
+                print("pre time" .. Time.time)
+                view.serilizeInfo:LoadSerizeInfoAsset(
+                    function()
+                        print("finish time" .. Time.time)
+                        if callback ~= nil then
+                            callback(controller)
+                        end
+                    end
+                )
+            else
+                if callback ~= nil then
+                    callback(controller)
+                end
+            end
+            uimanager.viewdic[uiid] = view
+            if isclosecurview then
+                uimanager.curopenuiid = uiid
+            end
+            viewGo:SetActive(false)
+        end,
+        AssetType.GameObjct,
+        true,
+        false
+    )
+end
+
+function uimanager.delayreenablebackkeyfun()
+    DelayTimeexeManager:Add(
+        DelayFunStruct(
+            0.5,
+            function()
+                uimanager.isloading = false
+            end
+        )
+    )
+end
+
+function uimanager.loadyindaoview()
+    uimanager.loadcommonuiasync(
+        "Prefab/UI/Yd",
+        "ydview",
+        function(obj)
+            GameObject.Instantiate(obj, uimanager.loadingcanvas.transform).transform:SetAsFirstSibling()
+        end
+    )
+end
+
+function uimanager.clearbackviewforstack(uiid)
+    local newclosestack = {}
+    for i = 1, #uimanager.uiCloseStack do
+        if uiid == uimanager.uiCloseStack[i] then
+            uimanager.uiCloseStack = newclosestack
+            return
+        end
+        newclosestack[i] = uimanager.uiCloseStack[i]
+    end
+end
+
+function uimanager.closeview(uiid, isenterstack, isfalseactive)
+    if uiid == UIID.None then
+        return
+    end
+
+    local view = uimanager.viewdic[uiid]
+    if view == nil then
+        return
+    end
+    if isenterstack then
+        Stack.push(uimanager.uiCloseStack, uiid)
+    end
+    view.closeview(isfalseactive, true)
+end
+
+function uimanager.backview()
+    if #uimanager.uiCloseStack <= 0 then --底部永远存在一个view
+        return false
+    end
+    uimanager.closeview(uimanager.curopenuiid, false, true)
+
+    local nextid = Stack.pop(uimanager.uiCloseStack)
+    if nextid ~= nil then
+        local view = uimanager.viewdic[nextid]
+        if view == nil then
+            uimanager.backview()
+            return true
+        end
+        view.recoverfromclose(view)
+        uimanager.curopenuiid = nextid
+    else
+        uimanager.curopenuiid = UIID.None
+    end
+    return true
+end
+
+function uimanager.backkeyfun()
+    if uimanager.isloading then --如果正在加载中 可以不用使返回键失效
+        return
+    end
+    if ydcontroller.state == 1 then -- 引导中使android 返回键 失效
+        return
+    end
+    local backs = uimanager.backview()
+    if not backs then
+        tipscontroller.showcommontips(
+            1,
+            Lang("是否退出App"),
+            Lang("确定"),
+            Lang("取消"),
+            function()
+                LuaUtil.exitapp()
+            end,
+            nil
+        )
+    end
+end
+
+function uimanager.comparisonversionisnew(netversion, innerversion) --版本比对
+    if netversion == nil then
+        return false
+    end
+    local netvstr = tostring(netversion)
+    local innervstr = tostring(innerversion)
+
+    local netvstrarry = LuaUtil.splitstr(netvstr, "%.")
+    local innervstrarry = LuaUtil.splitstr(innervstr, "%.")
+    if #innervstrarry ~= #netvstrarry then
+        return true
+    end
+    local cp = false
+    local count = #netvstrarry
+
+    local netnum = 0
+    local innernum = 0
+    for i = 1, #netvstrarry do
+        if netvstrarry[i] > innervstrarry[i] then
+            cp = true
+            return cp
+        elseif netvstrarry[i] < innervstrarry[i] then
+            cp = false
+            return cp
+        end
+    end
+    return cp
+end
+
+function uimanager.checkappversion(callback) --检查app更新
+    LuaNetAgent.appcheckversion(
+        GameSettingUtil.Idf .. IDFPlatform,
+        function(js)
+            print(js)
+            local data = DKJson.decode(js)
+            local state = data["state"]
+            if state == 0 or state == "0" then
+                if callback ~= nil then
+                    callback()
+                end
+                return
+            end
+            local version = data["appversion"]
+            local appurl = data["appurl"]
+            local forceupdate = data["update"]
+            local content = ""
+            if LangSetting == "zh" then
+                content = data["content"]
+            elseif LangSetting == "en" then
+                content = data["en_content"]
+            elseif LangSetting == "fzh" then
+                content = data["ftzw_content"]
+            end
+            local forcebool = false
+            if forceupdate == "1" or forceupdate == 1 then
+                forcebool = true
+            end
+            -- if version ~= nil and version ~= (GameSettingUtil.Version .. "." .. GameSettingUtil.Versioncode) then
+            if
+                uimanager.comparisonversionisnew(
+                    version,
+                    (GameSettingUtil.Version .. "." .. GameSettingUtil.Versioncode)
+                )
+             then
+                tipscontroller.showupdatetips(
+                    1,
+                    Lang("发现最新版本"),
+                    "v" .. version,
+                    content,
+                    function()
+                        CSUtil.OpenUrl(appurl)
+                    end,
+                    function()
+                        if forcebool then
+                            LuaUtil.exitapp()
+                        else
+                            if callback ~= nil then
+                                callback()
+                            end
+                        end
+                    end,
+                    forcebool
+                )
+            else
+                if callback ~= nil then
+                    callback()
+                end
+            end
+        end,
+        function()
+            if callback ~= nil then
+                callback()
+            end
+        end
+    )
+end
+
+function uimanager.checkapphotfix(callback) --检查是否有补丁更新
+    VersionManager:CheckVersion(
+        function(updatesize, filels, netversionmsg)
+            -- 更新大小返回
+            print("filels.Count " .. filels.Count)
+            if filels.Count > 0 or updatesize > 1 then
+                local sizekb = updatesize / 1024 / 1024
+                local vmsgs = LuaUtil.splitstr(netversionmsg, "|")
+                local code = vmsgs[1]
+                local zh = vmsgs[2]
+                local fzh = vmsgs[3]
+                local en = vmsgs[4]
+                local desc = zh
+                if LangSetting == "zh" then
+                    desc = zh
+                elseif LangSetting == "fzh" then
+                    desc = fzh
+                elseif LangSetting == "en" then
+                    desc = en
+                end
+
+                tipscontroller.showupdatetips(
+                    2,
+                    Lang("发现新补丁") .. " (v" .. code .. ")",
+                    string.format("%.2f", sizekb) .. "M",
+                    desc,
+                    function()
+                        VersionManager:StartDown(
+                            filels,
+                            function(p)
+                                -- 进度返回
+                                tipscontroller.setupdatepregress(p)
+                            end,
+                            function()
+                                -- 成功回调
+                                if callback ~= nil then
+                                    callback(1)
+                                end
+                            end,
+                            function(error)
+                                -- 错误返回
+                                if callback ~= nil then
+                                    callback(0)
+                                end
+                                print("error " .. error)
+                            end
+                        )
+                    end,
+                    nil,
+                    false
+                )
+            end
+        end,
+        function(error)
+            -- 错误返回
+            if callback ~= nil then
+                callback(0)
+            end
+            print("error " .. error)
+        end
+    )
+end
+
+function uimanager.checkfirmwareversionanddown(curversion, callback) --检查版本并获取最新的固件信息并开始发送给固件
+    print("curversion " .. curversion)
+    LuaNetAgent.appcheckversion(
+        "mc101",
+        function(js)
+            print(js)
+            local data = DKJson.decode(js)
+            local state = data["state"]
+            if state == 0 or state == "0" then
+                if callback ~= nil then
+                    callback()
+                end
+                return
+            end
+            local version = data["appversion"]
+            local binurl = data["appurl"] --二进制文件的文件地址
+            local content = ""
+            if LangSetting == "zh" then
+                content = data["content"]
+            elseif LangSetting == "en" then
+                content = data["en_content"]
+            elseif LangSetting == "fzh" then
+                content = data["ftzw_content"]
+            end
+            local forceupdate = data["update"]
+            local forcebool = false
+            if forceupdate == "1" or forceupdate == 1 then
+                forcebool = true
+            end
+            -- if version ~= nil and version ~= curversion then
+            if uimanager.comparisonversionisnew(version, curversion) then
+                tipscontroller.showupdatetips(
+                    2,
+                    Lang("发现新固件"),
+                    "v" .. version,
+                    content,
+                    function()
+                        commandcontroller.sendbluetupdate_netreqfun(binurl, callback)
+                    end,
+                    nil,
+                    forcebool
+                )
+            else
+                if callback ~= nil then
+                    callback(0)
+                end
+            end
+        end,
+        function()
+            if callback ~= nil then
+                callback(0)
+            end
+        end
+    )
+end
+
+function uimanager.startloadgame(callback)
+    uimanager.loadcommonuiasync(
+        "Prefab/UI/Tips",
+        "TipsView",
+        function(obj)
+            GameObject.Instantiate(obj, uimanager.tipscanvas.transform)
+            if callback ~= nil then
+                callback()
+            end
+        end
+    )
+end
+
+--开始次序加载
+function uimanager.loadgame()
+    Loading:ShowLoading(true, 0.2)
+    uimanager.openviewasync(
+        UIID.Login,
+        "Prefab/UI/Login",
+        "LoginView",
+        function(controller)
+            Loading:ShowLoading(true, 0.3)
+            uimanager.loadcommonuiasync(
+                "Prefab/UI/Plot",
+                "Plotview",
+                function(obj)
+                    GameObject.Instantiate(obj, uimanager.tipscanvas.transform).transform.localPosition =
+                        Vector3(5000, 0, 0)
+                    Loading:ShowLoading(true, 0.6)
+                    uimanager.prebackloadview(
+                        UIID.Command,
+                        "Prefab/UI/Command",
+                        "CommandView",
+                        function()
+                            --预加载command的窗口
+                            Loading:ShowLoading(true, 1)
+                            commandcontroller.initcmd(
+                                function()
+                                    uimanager.loadyindaoview()
+                                    Loading:HideLoading()
+                                    controller.aotologincheck()
+                                end
+                            )
+                        end
+                    )
+                end
+            )
+        end,
+        true,
+        true
+    )
+end
+
+function uimanager.unloadview(uiid)
+    LuaUtil.removeitem(uiid, uimanager.viewdic)
+    local controller = uimanager.controllerdic[uiid]
+    if controller == nil then
+        Debug.LogError(uiid + " 没有被发现！！！")
+        return
+    end
+    controller.unload()
+end
+
+return uimanager

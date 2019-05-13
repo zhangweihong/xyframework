@@ -1,0 +1,23 @@
+--自己写的堆栈操作
+local stack = {}
+function stack.push(tab, obj)
+    if tab == nil then
+        return
+    end
+    local size = #(tab)
+    tab[size + 1] = obj
+end
+
+function stack.pop(tab)
+    if tab == nil then
+        return nil
+    end
+    local size = #(tab)
+    if size == 0 then
+        Debug.LogError("stack pop 已经为空")
+        return nil
+    end
+    return table.remove(tab, size)
+end
+
+return stack

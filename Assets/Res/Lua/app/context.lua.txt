@@ -1,0 +1,131 @@
+local context = {}
+require("Lua/app/wrap")
+DKJson = require("Lua/util/dkjson")
+LuaUtil = require("Lua/util/util")
+LuaBase64 = require("Lua/util/base64")
+LuaNetAgent = require("Lua/util/netagent")
+require("Lua/util/uiid")
+LuaMessageCeneter = require("Lua/util/messagecenter")
+BaseView = require("Lua/mvc/baseview")
+BaseModel = require("Lua/mvc/basemodel")
+BaseController = require("Lua/mvc/basecontroller")
+UIManager = require("Lua/app/uimanager")
+UIManager.uicamera = GameObject.Find("DontDestroy/UICamera"):GetComponent(typeof(Camera))
+UIManager.cameraeffect = UIManager.uicamera.gameObject:GetComponent(typeof(CameraWaterWaveEffect))
+UIManager.canvas = GameObject.Find("DontDestroy/UICamera/Canvas"):GetComponent(typeof(RectTransform))
+UIManager.tipscanvas = GameObject.Find("DontDestroy/UICamera/TipsCanvas"):GetComponent(typeof(RectTransform))
+UIManager.loadingcanvas = GameObject.Find("DontDestroy/UICamera/LoadingCanvas")
+Loading = UIManager.loadingcanvas.transform:Find("LoadingView"):GetComponent(typeof(LoadingAnimation))
+require("Lua/app/uimanagerauto")
+Config = require("Lua/app/config")
+--承载数据表的
+Stack = require("Lua/util/stack")
+--承载数据表的
+Platform = CSUtil.GetPlatform()
+AppSetting = CSUtil.GetCurAppSetting()
+XFAndroidid = "5b88fa0c"
+XFIOSid = "5bce91ae"
+IDFPlatform = ".android" --默认是当前是android
+if Platform == "Android" then
+    IDFPlatform = ".android"
+    SDKManager:XFSDKInit(XFAndroidid)
+elseif Platform == "IOS" then
+    IDFPlatform = ".ios"
+    SDKManager:XFSDKInit(XFIOSid)
+end
+
+BatteryType = 0 --默认电池类型
+BatteryCanSet = false --电池是否可设置
+PhoneLangSetting = SDKManager:GetLanguage()
+--默认 zh 根据手机系统设置
+if not GamePlayerPrefs.HasKey("LangSetting") then
+    LangSetting = PhoneLangSetting
+else
+    local nowlang = GamePlayerPrefs.GetString("LangSetting")
+    if nowlang == "zh" then
+        LangSetting = "zh"
+    elseif nowlang == "en" then
+        LangSetting = "en"
+    elseif nowlang == "fzh" then
+        LangSetting = "fzh"
+    else
+        LangSetting = "zh"
+    end
+end
+
+if PhoneLangSetting == "zh" then --手机本地中文 才展示登录界面
+    ShowLogin = true
+else
+    ShowLogin = false
+end
+
+GPS = "31.1132571411,121.3820552139" --默认gps信号
+if ShowLogin then -- 可以登录才会去获取gps
+    SDKManager:SetGPS(
+        function(gps)
+            GPS = gps
+            Debug.Log("SetGPS  " .. GPS)
+        end
+    )
+end
+
+function Lang(key)
+    local lang = ""
+    local langtb = Config.finddatawithid("lang", key)
+    if LangSetting == "zh" then
+        if langtb ~= nil then
+            return Config.finddatawithid("lang", key).namecn
+        else
+            return key
+        end
+    elseif LangSetting == "en" then
+        if langtb ~= nil then
+            return Config.finddatawithid("lang", key).nameen
+        else
+            return key
+        end
+    elseif LangSetting == "fzh" then
+        if langtb ~= nil then
+            return Config.finddatawithid("lang", key).namefzh
+        else
+            return key
+        end
+    else
+        if langtb ~= nil then
+            return Config.finddatawithid("lang", key).namecn
+        else
+            return key
+        end
+    end
+end
+
+BotBannerDir = "UITexture/BotBanner" --机器人的banner 文件夹目录
+BotIconDir = "UITexture/BotIcon" --机器人的icon的文件目录
+
+Extra = {} --同步网络数据的额外字段
+Extra["isnewuser"] = 1 -- 0 表示不是 1表示是
+
+VersionManager:SetConfig("http://https://127.0.0.1/app/res") --设置补丁服务器的host
+
+function GetExtraData() --获取加密之后的数据
+    local extra = DKJson.encode(Extra)
+    print("push Extra " .. extra)
+    extra = CSUtil.CompressGZip(extra)
+    return extra
+end
+
+function SetExtraData(extra)
+    local str = CSUtil.DeCompressGZip(extra)
+    print("pull Extra " .. str)
+    Extra = DKJson.decode(str)
+end
+
+function CmdAsseble(key)
+    return Config.finddatawithid("cmdasseble", key).cmd --获取对应的指令集
+end
+
+function Action(key)
+    return Config.finddatawithid("action", key)
+end
+
+return context

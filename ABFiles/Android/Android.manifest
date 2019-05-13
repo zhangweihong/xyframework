@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 1159100908
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: share/version.assetbundle
+      Dependencies: {}

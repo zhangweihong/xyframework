@@ -1,0 +1,12 @@
+share/font|D:/client/xy/xyframework/Assets\Res/Font\GameFont.ttf|f5496f41d917c309a1916944da8efd80
+D:/client/xy/xyframework/Assets/Res/UIAltals/Bg|D:/client/xy/xyframework/Assets/Res/UIAltals/Bg.spriteatlas|00236446456608d82b0f970a2ecad9ca
+D:/client/xy/xyframework/Assets/Res/UITexture/Bg|D:/client/xy/xyframework/Assets/Res/UITexture/Bg/ghuan.png|500f6c1d97da6083cd194712da639bf6
+D:/client/xy/xyframework/Assets/Res/UITexture/Bg|D:/client/xy/xyframework/Assets/Res/UITexture/Bg/jiangb.png|e8ee07f77703d4c1279a06b18e9e9a90
+D:/client/xy/xyframework/Assets/Res/Prefab/UI/Login|D:/client/xy/xyframework/Assets/Res/Prefab/UI/Login/LoginView.prefab|498e92ca480d3987994121eb27aafb5c
+D:/client/xy/xyframework/Assets/Res/Sound/Bgm|D:/client/xy/xyframework/Assets/Res/Sound/Bgm/android超级玛丽-项目符号或乌龟打(bullet_or_爱给网_aigei_com.mp3|af3a6047b92ab0360f09040ff9b22ab0
+D:/client/xy/xyframework/Assets/Res/Sound/Sound|D:/client/xy/xyframework/Assets/Res/Sound/Sound/beep.ogg|1a547e788efdf95b437e65280fc4d4b9
+D:/client/xy/xyframework/Assets/Res/Sound/Sound|D:/client/xy/xyframework/Assets/Res/Sound/Sound/buttonclick.mp3|4b977b8c8d96f276ee211dcbfcffe948
+D:/client/xy/xyframework/Assets/Res/Sound/Sound|D:/client/xy/xyframework/Assets/Res/Sound/Sound/connect.mp3|3b107e4fd1502fc14582c3e7b795e051
+D:/client/xy/xyframework/Assets/Res/Sound/Sound|D:/client/xy/xyframework/Assets/Res/Sound/Sound/del.mp3|3a97a988c4544b7ed2a67ff11df980dc
+D:/client/xy/xyframework/Assets/Res/Sound/Sound|D:/client/xy/xyframework/Assets/Res/Sound/Sound/split.mp3|33fef77641f11922c386e060030566ba
+D:/client/xy/xyframework/Assets/Res/Sound/Sound|D:/client/xy/xyframework/Assets/Res/Sound/Sound/win.mp3|cdc41b6682e155c385093c52d2a4adff

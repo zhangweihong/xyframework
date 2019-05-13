@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 486122989
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f3d9bb2036a009300bd467db1af6443f
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- "Assets/Res/Sound/Bgm/android\u8D85\u7EA7\u739B\u4E3D-\u9879\u76EE\u7B26\u53F7\u6216\u4E4C\u9F9F\u6253(bullet_or_\u7231\u7ED9\u7F51_aigei_com.mp3"
+Dependencies: []

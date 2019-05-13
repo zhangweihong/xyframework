@@ -1,0 +1,20 @@
+ManifestFileVersion: 0
+CRC: 451547315
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 4f5b62513cfa10d7729a4d7fb1305cc7
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: f53a2cacd4c327e30587f3cbb342b18d
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 687078895
+  Script: {instanceID: 0}
+Assets:
+- Assets/Res/UIAltals/Bg.spriteatlas
+Dependencies: []

@@ -1,0 +1,38 @@
+--消息中心 C# 有一个自己的 这个是纯lua里面的 也是不建议使用
+--迫不得已才要用
+--建议使用callback这种方式
+local msgcenter = {}
+function msgcenter.register(id, fun)
+    local funs = msgcenter[id]
+    if funs == nil then
+        funs = {}
+        msgcenter[id] = funs
+    end
+    local iscontains, index = LuaUtil.contains(fun, funs)
+    if iscontains == false then
+        table.insert(funs, fun)
+    end
+end
+
+function msgcenter.unregister(id, fun)
+    local funs = msgcenter[id]
+    if funs ~= nil then
+        local iscontains, index = LuaUtil.contains(fun, funs)
+        if iscontains then
+            table.remove(funs, index)
+        end
+    end
+end
+
+function msgcenter.send(id, object)
+    local funs = msgcenter[id]
+    if funs ~= nil then
+        for i, fun in ipairs(funs) do
+            if fun ~= nil then
+                fun(object)
+            end
+        end
+    end
+end
+
+return msgcenter

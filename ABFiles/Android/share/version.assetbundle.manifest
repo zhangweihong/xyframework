@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 3531667020
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b350f75f6ce93df9b88ac990928c734c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Res/Local/Version/Android/version.txt
+Dependencies: []

@@ -1,0 +1,36 @@
+ManifestFileVersion: 0
+CRC: 1638692677
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ff00fb2e3f1517398f6c3a4c106786c1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Res/Lua/ui/login/Logincontroller.lua.txt
+- Assets/Res/Lua/ui/login/Loginview.lua.txt
+- Assets/Res/Lua/mvc/basemodel.lua.txt
+- Assets/Res/Lua/app/uimanagerauto.lua.txt
+- Assets/Res/Lua/util/messageid.lua.txt
+- Assets/Res/Lua/data/user.lua.txt
+- Assets/Res/Lua/util/dkjson.lua.txt
+- Assets/Res/Lua/util/uiid.lua.txt
+- Assets/Res/Lua/util/netagent.lua.txt
+- Assets/Res/Lua/app/config.lua.txt
+- Assets/Res/Lua/ui/login/Loginmodel.lua.txt
+- Assets/Res/Lua/util/stack.lua.txt
+- Assets/Res/Lua/util/util.lua.txt
+- Assets/Res/Lua/app/uimanager.lua.txt
+- Assets/Res/Lua/app/wrap.lua.txt
+- Assets/Res/Lua/app/app.lua.txt
+- Assets/Res/Lua/util/messagecenter.lua.txt
+- Assets/Res/Lua/app/context.lua.txt
+- Assets/Res/Lua/mvc/basecontroller.lua.txt
+- Assets/Res/Lua/mvc/baseview.lua.txt
+- Assets/Res/Lua/util/base64.lua.txt
+Dependencies: []

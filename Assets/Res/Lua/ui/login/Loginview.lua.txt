@@ -1,0 +1,81 @@
+--在外面写变量的时候要注意下不要和元表里面的默认属性冲突
+--不然元表的属性可能就会被覆盖
+--自己需要什么方法自行在进行添加，！！！不要和元表重叠就好
+local Loginview = BaseView.new()
+Loginview.openviewfun = nil
+Loginview.closeviewfun = nil
+Loginview.destroyfun = nil
+--对应C# 层的awake
+function Loginview.awake()
+    Loginview.injectobject()
+end
+
+--injectobject 函数不要手动填写代码 在注入的时候会有新的代码自动添加进来
+function Loginview.injectobject()
+    --s
+    --e
+end
+
+--对应C# 层的start
+function Loginview.start()
+end
+
+function Loginview.enable()
+end
+
+function Loginview.disable()
+end
+
+function Loginview.clickfun(go)
+end
+
+--帧率函数 如果不用 尽量不要 打开 一般 不要在 update 里面调用东西 回来会写一个统一刷新的地方 被摧毁时候会调用一次
+-- function Loginview.update()
+-- end
+
+--gameobject被摧毁时候会调用一次
+function Loginview.ondestroy()
+    if Loginview.destroyfun ~= nil then
+        Loginview.destroyfun()
+    end
+end
+
+--设置数据只是单纯的model模型的数据
+function Loginview.setdata(model)
+end
+
+function Loginview.init(gameobject)
+    Loginview.super.init(Loginview, gameobject)
+end
+
+--打开窗口
+function Loginview.openview()
+    Loginview.super.openview(Loginview)
+    --强制执行一次父类函数
+    if Loginview.openviewfun ~= nil then
+        Loginview.openviewfun()
+    end
+end
+
+--关闭view 仅且是关闭不会释放
+function Loginview.closeview(isFalseActive, isShowCloseAni)
+    Loginview.super.closeview(Loginview, isFalseActive, isShowCloseAni)
+    if Loginview.closeviewfun ~= nil then
+        Loginview.closeviewfun()
+    end
+end
+
+--清除的数据或者一些引用 使ui还原为初始加载的情况 但是 资源不会被释放
+function Loginview.clear()
+    Loginview.super.clear(Loginview)
+    --强制执行一次父类函数
+end
+
+--关闭摧毁并卸载掉资源
+function Loginview.unload()
+    Loginview.clear()
+    Loginview.super.unload(Loginview)
+    --强制执行一次父类函数
+end
+
+return Loginview

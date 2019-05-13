@@ -1,0 +1,9 @@
+1|更新资源和修复bug|更新資源和修復bug|Update resources and Fix bugs
+prefab/ui/login.assetbundle|2a33a4e0ee5e62b409d490a0911ecd23|5287
+share/font.assetbundle|523197c12b6c46348ebaf8bab8c3ef57|9561878
+share/lua.assetbundle|b78a07c61ad96881d1f1a26565fb692f|25146
+share/preload.assetbundle|6504e500ed8aaa0b97c4a5f9314bb487|1030
+sound/bgm.assetbundle|5ef4c5835c856d1da96fe18766400631|2547
+sound/sound.assetbundle|fad95118e8e219f913d5482139a7e8db|145912
+uialtals/bg.assetbundle|43b28fbf3efc5920a3a423379adcec54|53803
+uitexture/bg.assetbundle|f619063628ea737b973c278b9583d84f|93779

@@ -1,0 +1,14 @@
+---承载数据模型
+local tempmodel = BaseModel.new()
+
+--初始化数据
+function tempmodel.init()
+    tempmodel.super.init()
+end
+
+--清理数据
+function tempmodel.clear()
+    tempmodel.super.clear()
+end
+
+return tempmodel

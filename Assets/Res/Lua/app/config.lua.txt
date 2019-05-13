@@ -1,0 +1,26 @@
+--这是一个自动生成的类 数据表的承载类
+local config = {}
+
+--加载所有的表数据
+function config.loaddata()
+	config['user'] = require("Lua/data/user")
+end
+
+--找到整张表通过名字 是个table
+function config.getdata(tablename)
+	local t = config[tablename]
+	return t
+end
+
+--找到一条数据 是个table
+function config.finddatawithid(tablename,id)
+	local t = config.getdata(tablename)[id]
+	return t
+end
+
+--找到一个值 主要是用这个 是个具体value
+function config.finddatawithidkey(tablename,id,key)
+	local t = config.finddatawithid(tablename,id)[key]
+	return t
+end
+return config

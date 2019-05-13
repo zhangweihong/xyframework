@@ -1,0 +1,21 @@
+function UIManager.registercontroller()
+	UIManager.controllerdic[UIID.Login] = require("Lua/ui/login/logincontroller")
+end
+
+function UIManager.registermodel()
+	UIManager.modeldic[UIID.Login] = require("Lua/ui/login/loginmodel")
+end
+
+function UIManager.initmvc()
+	for i, v in ipairs(UIManager.controllerdic) do
+		if v ~= nil then
+			v.init()
+		end
+	end
+
+	for i, v in ipairs(UIManager.modeldic) do
+		if v ~= nil then
+			v.init()
+		end
+	end
+end

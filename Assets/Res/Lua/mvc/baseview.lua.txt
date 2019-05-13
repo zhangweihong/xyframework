@@ -1,0 +1,129 @@
+--baseview start 所有view的基类
+local baseview = {}
+--内部初始化在new 新类的时候会被执行一次
+function baseview._init()
+    baseview.serilizeInfo = {}
+    baseview.bornPos = Vector3.zero	
+    baseview.isOpen = false
+    baseview.lastCloseTime = 0
+    baseview.obj = {}
+    baseview.tr = {}
+    baseview.panel = {}
+    baseview.isFalseActive = false
+    baseview.uiAnimation = UIAnimationType.Fade
+end
+
+function baseview.new()
+    local t = {}
+    local super = {}
+    super.__index = super
+    baseview._init();
+    for k,v in pairs(baseview) do
+        if k == "new" or k == "__index" or k == "_init" then
+        else
+            super[k] = v
+        end
+    end
+    t.super = super
+    setmetatable(t,super)
+	return t
+end
+
+function baseview.init(view,gameobjct)
+    view.obj = gameobjct
+    view.tr = gameobjct.transform
+    view.bornPos = view.tr.localPosition
+    view.serilizeInfo = gameobjct:GetComponent(typeof(SerilizeInfo))
+    view.panel = gameobjct:GetComponent(typeof(CanvasGroup))
+    -- view.panel = gameobjct:GetComponent(typeof(UIPanel))
+    -- if view.panel ~= nil then
+    --     view.panel.leftAnchor.target = Tr;
+    --     view.panel.rightAnchor.target = Tr;
+    --     view.panel.topAnchor.target = Tr;
+    --     view.panel.bottomAnchor.target = Tr;
+    -- end
+end
+
+
+function baseview.moveout(view)
+    view.tr.localPosition = Vector3.one * 9999;
+end
+
+function baseview.resetpos(view)
+    view.tr.localPosition = baseview.bornPos;
+end
+
+function baseview.openview(view)
+    view.isOpen = true
+    if view.uiAnimation == UIAnimationType.Fade then
+        view.resetpos(view)
+        AnimationUtil.Fade(view.panel,0.2,1,0.2)
+    elseif view.uiAnimation == UIAnimationType.Move then
+        AnimationUtil.Move(view.tr,Vector3(0,800,0),view.bornPos)
+    end
+    -- UIManager.cameraeffect:StartWaveAnimation()
+end
+
+function baseview.checkCloseView(view)
+    if view.isFalseActive then
+        view.obj:SetActive(false)
+    else
+        view.moveout(view)
+    end
+end
+
+function baseview.closeview(view,isFalseActive,isShowCloseAni)
+    if view.isOpen == false then
+        return
+    end
+    
+    view.isFalseActive = isFalseActive
+    view.lastCloseTime = Time.time;
+    if view.closeFunDelegate ~= nil and type(view.closeFunDelegate) == "function" then
+        view.closeFunDelegate()
+    end
+    if isShowCloseAni then
+        if view.uiAnimation == UIAnimationType.Fade then
+            AnimationUtil.Fade(view.panel,1,0.2,0.2,function()
+                baseview.checkCloseView(view)
+            end)
+        elseif view.uiAnimation == UIAnimationType.Move then
+            AnimationUtil.Move(view.tr,view.bornPos,Vector3(0,800,0),0.3,function()
+                baseview.checkCloseView(view)
+            end)
+        end
+    else
+        view.checkCloseView(view)
+    end
+    view.isOpen = false
+end
+
+function baseview.recoverfromclose(view)
+    if view.isFalseActive then
+        view.obj:SetActive(true)
+    end
+    view.isFalseActive = false
+    view.openview(view)
+end
+
+function baseview.clear(view)
+    view.isOpen = false
+    view.isFalseActive = false
+    view.bornPos = Vector3.zero
+end
+
+function baseview.unload(view)
+    if view.serilizeInfo ~= nil then
+        view.serilizeInfo:UnLoadSerizeInfoAsset()
+    end
+end
+
+function baseview.isvaild(view)
+    if view.obj ~= nil then
+        return true
+    else
+        return false
+    end
+end
+
+return baseview

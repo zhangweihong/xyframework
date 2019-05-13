@@ -1,0 +1,42 @@
+local basecontroller = {}
+
+function basecontroller._init()
+    basecontroller.abname = ""
+    basecontroller.assetname = ""
+end
+
+function basecontroller.new()
+    local t = {}
+    local super = {}
+    super.__index = super
+    basecontroller._init()
+    for k, v in pairs(basecontroller) do
+        if k == "new" or k == "__index" or k == "_init" then
+        else
+            super[k] = v
+        end
+    end
+    t.super = super
+    setmetatable(t, super)
+    return t
+end
+
+function basecontroller.init()
+end
+
+function basecontroller.registermodel(model)
+end
+
+function basecontroller.refreshmodel(model)
+end
+
+function basecontroller.registerview(view)
+end
+
+function basecontroller.clear()
+end
+
+function basecontroller.unload()
+end
+
+return basecontroller

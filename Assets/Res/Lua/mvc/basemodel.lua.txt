@@ -1,0 +1,29 @@
+local basemodel = {}
+basemodel.__index = basemodel
+
+function basemodel._init()
+end
+
+function basemodel.new()
+    local t = {}
+    local super = {}
+    super.__index = super
+    basemodel._init()
+    for k, v in pairs(basemodel) do
+        if k == "new" or k == "__index" or k == "_init" then
+        else
+            super[k] = v
+        end
+    end
+    t.super = super
+    setmetatable(t, super)
+    return t
+end
+
+function basemodel.init()
+end
+
+function basemodel.clear()
+end
+
+return basemodel
