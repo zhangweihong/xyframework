@@ -212,6 +212,25 @@ public static class Util
     }
 
     /// <summary>
+    /// 清除 cache 里面的全部缓存过得文件
+    /// </summary>
+    public static void ClearCache()
+    {
+        string cachepath = Application.persistentDataPath;
+        if (Directory.Exists(cachepath))
+        {
+            string[] allfiles = Directory.GetFiles(cachepath, "*.assetbundle", SearchOption.AllDirectories);
+            for (int i = 0; i < allfiles.Length; i++)
+            {
+                if (File.Exists(allfiles[i]))
+                {
+                    File.Delete(allfiles[i]);
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// 保存字符串到本地缓存
     /// </summary>
     /// <param name="relapath"></param>

@@ -167,6 +167,19 @@ public class VersionManager : SingletonMono<VersionManager>
             m_CacheVerInfos = GetVersionInfos(GetVersiontext(m_Cacheversionpath), 2);
             m_APPInnerVerInfos = m_CacheVerInfos;
             m_AppResVersionMsg = m_CacheVersionMsg;
+            try
+            {
+                string version = m_AppResVersionMsg.Split('|')[1];
+                if (version != GameSettingUtil.Version)
+                {
+                    Util.ClearCache();
+                }
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
         }
         else
         {

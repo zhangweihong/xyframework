@@ -227,7 +227,7 @@ public class AssetBundleCreatorEditor : Editor
             File.Delete(versionPath);
         }
         StreamWriter versionSw = File.CreateText(versionPath);
-        versionSw.WriteLine(versioncode + "|" + zhdesc + "|" + fzhdesc + "|" + endesc);
+        versionSw.WriteLine(versioncode + "|" + GameSettingUtil.Version + "|" + zhdesc + "|" + fzhdesc + "|" + endesc);
         for (int i = 0; i < resFiles.Length; i++)
         {
             string fullPath = resFiles[i];
