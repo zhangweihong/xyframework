@@ -173,6 +173,8 @@ public class VersionManager : SingletonMono<VersionManager>
                 if (version != GameSettingUtil.Version)
                 {
                     Util.ClearCache();
+                    m_APPInnerVerInfos = m_LocalVerInfos;//缓存版本不一致的删除完之后 还原本地信息
+                    m_AppResVersionMsg = m_LocalVersionMsg;
                 }
             }
             catch (System.Exception)
